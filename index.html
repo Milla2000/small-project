@@ -821,10 +821,6 @@
         </div>
     </div>
 
-    <div class="click-counter">
-        
-    </div>
-
     <div class="celebration" id="celebration">
         <h2>I love you! 💕</h2>
 
@@ -943,9 +939,6 @@
         const yesButton = document.getElementById('yesButton');
         const noButton = document.getElementById('noButton');
         const celebration = document.getElementById('celebration');
-        const clickCounter = document.querySelector('.click-counter');
-        const noClickCount = document.getElementById('noClickCount');
-        let noClicks = 0;
 
         // Generate evil faces
         function generateEvilFaces() {
@@ -977,10 +970,6 @@
 
         // Move button away from cursor/touch
         function moveButtonAway(e) {
-            noClicks++;
-            noClickCount.textContent = noClicks;
-            clickCounter.classList.add('show');
-
             noButton.classList.add('shake');
             noButton.classList.add('runaway');
             generateEvilFaces();
@@ -994,7 +983,7 @@
 
             // Get cursor/touch position
             let cursorX, cursorY;
-            if (e.type === 'touchstart') {
+            if (e.type === 'touchstart' || e.type === 'touchmove') {
                 cursorX = e.touches[0].clientX;
                 cursorY = e.touches[0].clientY;
             } else {
@@ -1046,7 +1035,27 @@
         noButton.addEventListener('touchstart', function (e) {
             e.preventDefault();
             moveButtonAway(e);
-        });
+        }, { passive: false });
+
+        // Detect touch near the button (for mobile)
+        document.addEventListener('touchmove', function (e) {
+            if (!noButton.classList.contains('runaway')) return;
+
+            const touch = e.touches[0];
+            const buttonRect = noButton.getBoundingClientRect();
+            const proximityThreshold = 80;
+
+            const touchX = touch.clientX;
+            const touchY = touch.clientY;
+
+            // Check if touch is near the button
+            if (touchX > buttonRect.left - proximityThreshold &&
+                touchX < buttonRect.right + proximityThreshold &&
+                touchY > buttonRect.top - proximityThreshold &&
+                touchY < buttonRect.bottom + proximityThreshold) {
+                moveButtonAway(e);
+            }
+        }, { passive: true });
 
         noButton.addEventListener('click', function (e) {
             e.preventDefault();
