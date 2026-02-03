@@ -612,6 +612,13 @@
                 font-size: 1em;
             }
 
+            /* Fix for runaway No button on tablets */
+            #noButton.runaway {
+                width: auto !important;
+                min-width: 120px;
+                max-width: 200px;
+            }
+
             .celebration h2 {
                 font-size: 2.5em;
             }
@@ -690,6 +697,13 @@
                 padding: 12px 40px;
                 font-size: 1em;
                 width: 100%;
+            }
+
+            /* Fix for runaway No button on mobile - prevent full width */
+            #noButton.runaway {
+                width: auto !important;
+                min-width: 120px;
+                max-width: 200px;
             }
 
             .celebration {
@@ -1081,6 +1095,14 @@
         // Yes button - celebration time!
         yesButton.addEventListener('click', function () {
             celebration.classList.add('active');
+
+            // Hide the No button with animation
+            noButton.style.transition = 'all 0.5s ease';
+            noButton.style.opacity = '0';
+            noButton.style.transform = 'scale(0)';
+            setTimeout(() => {
+                noButton.style.display = 'none';
+            }, 500);
 
             // Show the media carousel
             const mediaCarousel = document.getElementById('mediaCarousel');
